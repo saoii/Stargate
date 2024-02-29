@@ -27,7 +27,11 @@ else
             <MudTh>Current Title</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Name">
+                <a href="progress/@context.id">
+                    @context.Name
+                </a>
+            </MudTd>
             <MudTd DataLabel="Rank">@context.Duties.FirstOrDefault().Rank</MudTd>
             <MudTd DataLabel="Title">@context.Duties.FirstOrDefault().Title</MudTd>
         </RowTemplate>

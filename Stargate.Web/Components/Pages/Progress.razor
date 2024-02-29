@@ -1,0 +1,126 @@
+﻿@page "/Progress/{userId:int}"
+@rendermode InteractiveServer
+
+@using Stargate.Services.Models
+@using Stargate.Services.Models.Dto;
+@using Stargate.Web.Services;
+
+@inject DutyDataService service;
+@inject AstronautDataService astroService;
+
+<MyMudProviders />
+
+<PageTitle>People</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Progress for @UserName</MudText>
+<MudText Class="mb-8">Progress for astronaut.</MudText>
+
+@if (duties == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Alternate">
+        @foreach(var d in duties)
+        {
+            if (d.Rank == currentDuty.Rank && d.Title == currentDuty.Title)
+            {
+                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                        <ItemContent>
+                        <MudAlert Severity="Severity.Success">@d.Rank</MudAlert>
+                    </ItemContent>
+                    <ItemOpposite>
+                        <MudText Color="Color.Success">@d.Title</MudText>
+                    </ItemOpposite>
+                </MudTimelineItem>
+            }
+            else
+            {
+                <MudTimelineItem Color="Color.Info" Variant="Variant.Filled">
+                    <ItemContent>
+                        <MudAlert Severity="Severity.Info">@d.Rank</MudAlert>
+                    </ItemContent>
+                    <ItemOpposite>
+                        <MudText Color="Color.Info">@d.Title</MudText>
+                    </ItemOpposite>
+                </MudTimelineItem>
+            }
+        }
+    </MudTimeline>
+
+    <MudSpacer />
+    <MudText Typo="Typo.h5" GutterBottom="true">History</MudText>
+
+    <MudTable Items="duties" Hover="true" SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh>Rank</MudTh>
+            <MudTh>Title</MudTh>
+            <MudTh>Start</MudTh>
+            <MudTh>End</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Rank">@context.Rank</MudTd>
+                <MudTd DataLabel="Title">@context.Title</MudTd>
+                <MudTd DataLabel="StartDate">@context.startDate.Date.ToShortDateString()</MudTd>
+                <MudTd DataLabel="EndDate">@context.endDate.Date.ToShortDateString()</MudTd>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+            </PagerContent>
+        </MudTable>
+}
+
+@code {
+
+    [Parameter]
+    public int userId { get; set; }
+
+    public string UserName { get; set; } = string.Empty;
+
+    private DutyDto[]? duties;
+    private DutyDto currentDuty;
+    private Astronaut astronaut;
+    private AstronautDto astronautDto;
+
+    private TimelinePosition _position { get; set; } = TimelinePosition.Top;
+    private TimelineOrientation _orientation { get; set; } = TimelineOrientation.Horizontal;
+    private bool _reverse { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        duties = await service.GetHistory(userId);
+        astronaut = await astroService.Get(userId);
+
+        UserName = astronaut.Person.UserName;
+
+        astronautDto = await astroService.GetByName(UserName);
+
+        currentDuty = duties.Where(d => d.endDate.Date == DateTime.MaxValue.Date).FirstOrDefault();
+   }
+
+    private void OnOrientationChange(TimelineOrientation value)
+    {
+        _orientation = value;
+        switch (value)
+        {
+            case TimelineOrientation.Vertical:
+                if (_position is TimelinePosition.Top or TimelinePosition.Bottom)
+                    _position = TimelinePosition.Start;
+                break;
+            case TimelineOrientation.Horizontal:
+                if (_position is TimelinePosition.Start or TimelinePosition.Left or TimelinePosition.Right or TimelinePosition.End)
+                    _position = TimelinePosition.Top;
+                break;
+        }
+    }
+
+    bool IsSwitchDisabled()
+    {
+        if (_position == TimelinePosition.Alternate)
+            return false;
+        else
+            _reverse = false;
+        return true;
+    }
+}

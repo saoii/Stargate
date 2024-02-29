@@ -16,6 +16,9 @@ builder.Services.AddHttpClient<AstronautDataService>(
 builder.Services.AddHttpClient<PersonDataService>(
     client => client.BaseAddress = new Uri("https://stargateapi.azurewebsites.net"));
 
+builder.Services.AddHttpClient<DutyDataService>(
+    client => client.BaseAddress = new Uri("https://stargateapi.azurewebsites.net"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
