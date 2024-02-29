@@ -55,7 +55,7 @@ namespace Stargate.Services
            .Join(_context.Astronauts, d => d.AstronautId, a => a.Id, (d, a) => new { Duty = d, Astronaut = a })
            .Join(_context.People, da => da.Astronaut.PersonId, p => p.Id, (da, p) => new { DutyAstronaut = da, Person = p })
             .Where(x => x.Person.UserName == username)
-           .Select(x => new { x.DutyAstronaut.Duty, x.DutyAstronaut.Astronaut, x.Person }).FirstOrDefaultAsync();
+           .Select(x => new { x.DutyAstronaut.Duty, x.DutyAstronaut.Astronaut, x.Person }).LastOrDefaultAsync();
 
             var duty = result.Duty;
             var person = result.Person;

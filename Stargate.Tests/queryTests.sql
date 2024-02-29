@@ -1,7 +1,7 @@
-declare @username nvarchar(50) = 'wriker'
+declare @username nvarchar(50) = 'jpicard'
 
 /*
-delete from duty where id in (23,24)
+delete from duty where id in (33,34)
 update duty set EndDate = null where id = 6
 */
 
