@@ -5,7 +5,7 @@
 
 ## Astronaut Career Tracking System (ACTS)
 
-ACTS is used as a tool to maintain a record of all the People that have served as Astronauts. When serving as an Astronaut, your *Job* (Duty) is tracked by your Rank, Title and the Start and End Dates of the Duty.
+ACTS is used as a tool to maintain a record of all the People who have served as Astronauts. When serving as an Astronaut, your *Job* (Duty) is tracked by your Rank, Title, and the Start and End Dates of the Duty.
 
 The People that exist in this system are not all Astronauts. ACTS maintains a master list of People and Duties that are updated from an external service (not controlled by ACTS). The update schedule is determined by the external service.
 
@@ -19,20 +19,18 @@ The People that exist in this system are not all Astronauts. ACTS maintains a ma
 
 ##### Enhance the Stargate API (Required)
 
-The REST API is expected to do the following:
+The REST API does the following:
 
-1. Retrieve a person by name.
-1. Retrieve all people.
-1. Add/update a person by name.
-1. Retrieve Astronaut Duty by name.
-1. Add an Astronaut Duty.
+1. Retrieves a person by name.
+1. Retrieves all people.
+1. Add/updates a person by name.
+1. Retrieves Astronaut Duty by name.
+1. Adds an Astronaut Duty.
 
-##### Implement a user interface: (Optional)
 
-The UI is expected to do the following:
+The Blazor WebApp UI:
 
-1. Successfully run a console, web, or application without errors.
-1. Implement call(s) to retrieve an individual's astronaut dutys.
+1. Retrieves an individual's astronaut duties.
 1. Display the progress of the process and the results in a visually sophisticated and appealing manner.
 
 ## Tasks
@@ -40,21 +38,20 @@ The UI is expected to do the following:
 Overview
 Examine the code, find and resolve any flaws, if any exist. Identify design patterns and follow or change them. Provide fix(es) and be prepared to describe the changes.
 
-1. Generate the database
-   * This is your source and storage location
-1. Enforce the rules
+1. Generate the database (Azure SQL)
+1. Enforce the bew rules
 1. Improve defensive coding
-1. Add unit tests (xUnit)
-   * identify the most impactful methods requiring tests
-   * reach >50% code coverage
-1. Implement process logging
+1. Added unit/integration tests with xUnit
+   * identified the most impactful methods requiring tests
+   * reach > 50% code coverage
+1. Implement process logging (Serilog)
    * Log exceptions
    * Log successes
    * Store the logs in the database
 
-## Rules
+## These rules are enforced
 
-1. A Person is uniquely identified by their Name.
+1. A Person is uniquely identified by their Name (username).
 1. A Person who has not had an astronaut assignment will not have Astronaut records.
 1. A Person will only ever hold one current Astronaut Duty Title, Start Date, and Rank at a time.
 1. A Person's Current Duty will not have a Duty End Date.
