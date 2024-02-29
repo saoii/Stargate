@@ -14,6 +14,7 @@ public interface IDutyService
     public Task<Duty> SetPromotionAsync(string username);
     public Task<DutyDto> ReadAsync(int id);
     public Task<List<DutyDto>> ListCurrentAsync();
+    public Task<List<DutyDto>> ListHistoryAsync(int astronautId);
 }
 
 public class DutyService : IDutyService
@@ -184,6 +185,32 @@ public class DutyService : IDutyService
 
             var dto = new DutyDto(duty.Id, person.UserName, TextGenHelper.GetFriendlyText(duty.Rank), TextGenHelper.GetFriendlyText(duty.Title), duty.StartDate.Date, endDate);
 
+
+            dutyDtos.Add(dto);
+        }
+
+        return dutyDtos;
+    }
+
+    public async Task<List<DutyDto>> ListHistoryAsync(int astronautId)
+    {
+        List<DutyDto> dutyDtos = new();
+
+        var result = await _context.Duties
+         .Join(_context.Astronauts, d => d.AstronautId, a => a.Id, (d, a) => new { Duty = d, Astronaut = a })
+         .Join(_context.People, da => da.Astronaut.PersonId, p => p.Id, (da, p) => new { DutyAstronaut = da, Person = p })
+         .Where(x => x.DutyAstronaut.Astronaut.Id == astronautId)
+         .Select(x => new { x.DutyAstronaut.Duty, x.DutyAstronaut.Astronaut, x.Person })
+         .ToListAsync();
+
+        foreach (var r in result)
+        {
+            var duty = r.Duty;
+            var person = r.Person;
+
+            var endDate = duty.EndDate ??= DateTime.MaxValue.Date;
+
+            var dto = new DutyDto(duty.Id, person.UserName, TextGenHelper.GetFriendlyText(duty.Rank), TextGenHelper.GetFriendlyText(duty.Title), duty.StartDate.Date, endDate);
 
             dutyDtos.Add(dto);
         }

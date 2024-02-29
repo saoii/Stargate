@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stargate.Services", "Starga
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stargate.Tests", "Stargate.Tests\Stargate.Tests.csproj", "{902C51FD-A183-46B1-9034-618F71694BAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stargate.Web", "Stargate.Web\Stargate.Web.csproj", "{A69725F9-3FD1-4AAA-B975-68B24ECC54BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{902C51FD-A183-46B1-9034-618F71694BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{902C51FD-A183-46B1-9034-618F71694BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{902C51FD-A183-46B1-9034-618F71694BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A69725F9-3FD1-4AAA-B975-68B24ECC54BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A69725F9-3FD1-4AAA-B975-68B24ECC54BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A69725F9-3FD1-4AAA-B975-68B24ECC54BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A69725F9-3FD1-4AAA-B975-68B24ECC54BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

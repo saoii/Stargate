@@ -20,6 +20,17 @@ public static class WebAppDutyExtensions
 
         }).Produces<Duty[]>(StatusCodes.Status200OK).WithOpenApi().WithName("ListDuty");
 
+        app.MapGet("/duties/{astronautId:int}", async (int astronautId, IDutyService service, ILogger<Duty> logger) =>
+        {
+            var allDutys = await service.ListHistoryAsync(astronautId);
+
+            logger.LogInformation("Listing all duties");
+
+            return Results.Ok(allDutys);
+
+        }).Produces<Duty[]>(StatusCodes.Status200OK).WithOpenApi().WithName("ListDutyHistory");
+
+
         app.MapGet("/duty/{DutyId:int}", async (int DutyId, IDutyService service, ILogger<Duty> logger) =>
         {
             var Duty = await service.ReadAsync(DutyId);

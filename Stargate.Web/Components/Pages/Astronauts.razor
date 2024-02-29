@@ -1,0 +1,48 @@
+﻿@page "/Astronauts"
+@rendermode InteractiveServer
+
+@using Stargate.Services.Models.Dto;
+@using Stargate.Web.Services;
+
+
+@inject AstronautDataService service;
+
+<MyMudProviders />
+
+<PageTitle>Astronauts</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Astronauts current duties</MudText>
+<MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
+
+@if (astronauts == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="astronauts" Hover="true" SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Current Rank</MudTh>
+            <MudTh>Current Title</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.Name</MudTd>
+            <MudTd DataLabel="Rank">@context.Duties.FirstOrDefault().Rank</MudTd>
+            <MudTd DataLabel="Title">@context.Duties.FirstOrDefault().Title</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+@code {
+    private AstronautDto[]? astronauts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        astronauts = await service.GetAll();
+    }
+
+}
