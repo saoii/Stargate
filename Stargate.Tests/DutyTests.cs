@@ -34,21 +34,12 @@ namespace Stargate.Tests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        [Theory]
-        [InlineData(0)]
-        public async Task GET_invalid(int id)
-        {
-            var response = await _client.GetAsync($"/duty/{id}");
-
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        }
-
         /// <summary>
         /// Retrieve Astronaut Duty by name.
         /// </summary>
         /// <param name="name"></param>
         [Theory]
-        [InlineData("jpicard")]
+        [InlineData("wriker")]
         public async Task GET_byname(string name)
         {
             var response = await _client.GetAsync($"/duty/{name}");

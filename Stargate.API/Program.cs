@@ -32,6 +32,8 @@ builder.Services.RegisterServices();
 builder.Services.AddProblemDetails();
 
 builder.Host.UseSerilog();
+builder.Services.AddCors();
+
 
 var app = builder.Build();
 
@@ -44,6 +46,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler();
 }
 
+app.UseCors(p => p.WithOrigins("https://localhost:7000", "http://localhost:5000").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 app.UseHttpsRedirection();
 
 app.MapPersonEndpoints();

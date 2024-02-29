@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
+using Stargate.Services;
 using Stargate.Services.Models;
 using Stargate.Services.Repos;
 
@@ -9,15 +10,32 @@ public static class WebAppAstronautExtensions
 {
     public static void MapAstronautEndpoints(this WebApplication app)
     {
-        app.MapGet("/astronauts", async (IRepository<Astronaut> repo, ILogger<Astronaut> logger) =>
+        app.MapGet("/astronauts", async (IAstronautService service, ILogger<Astronaut> logger) =>
         {
-            var allAstronauts = await repo.AllAsync();
+            var allAstronauts = await service.ListCurrentAsync();
 
             logger.LogInformation("Listing all astronauts");
 
             return Results.Ok(allAstronauts);
 
-        }).Produces<Astronaut[]>(StatusCodes.Status200OK).WithOpenApi().WithName("ListAstronaut");
+        }).Produces<Astronaut[]>(StatusCodes.Status200OK).WithOpenApi().WithName("ListAstronauts");
+
+        app.MapGet("/astronaut/{username}", async (string username, IAstronautService service, ILogger<Astronaut> logger) =>
+        {
+            var Astronaut = await service.ReadAsync(username);
+
+            if (Astronaut == null)
+            {
+                string message = $"Astronaut with UserName {username} not found.";
+
+                logger.LogError(message);
+
+                return Results.Problem(message, statusCode: 404);
+            }
+
+            return Results.Ok(Astronaut);
+        }).ProducesProblem(404).Produces<Astronaut>(StatusCodes.Status200OK).WithOpenApi().WithName("GetAstronautByName");
+
 
         app.MapGet("/astronaut/{AstronautId:int}", async (int AstronautId, IRepository<Astronaut> repo, ILogger<Astronaut> logger) =>
         {

@@ -37,7 +37,9 @@ public static class WebAppPersonExtensions
             if (!MiniValidator.TryValidate(person, out var errors))
                 return Results.ValidationProblem(errors);
 
-            if (repo.GetAsync(person.UserName) != null)
+            var result = await repo.GetAsync(person.UserName);
+
+            if (result != null)
                 return Results.Problem($"Person with username {person.UserName} already exists.", statusCode: 403);
 
             var newPerson = await repo.AddAsync(person);
@@ -54,6 +56,7 @@ public static class WebAppPersonExtensions
         {
             if (!MiniValidator.TryValidate(person, out var errors))
                 return Results.ValidationProblem(errors);
+
             if (await repo.GetAsync(person.Id) == null)
                 return Results.Problem($"Person with Id {person.Id} not found", statusCode: 404);
 

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stargate.API", "Stargate.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stargate.Services", "Stargate.Services\Stargate.Services.csproj", "{905AAC6C-7FAD-4EED-917A-61EB6052EDE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stargate.Tests", "Stargate.Tests\Stargate.Tests.csproj", "{902C51FD-A183-46B1-9034-618F71694BAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stargate.Tests", "Stargate.Tests\Stargate.Tests.csproj", "{902C51FD-A183-46B1-9034-618F71694BAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

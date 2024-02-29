@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stargate.Services.Data;
+using Stargate.Services.Helpers;
 using Stargate.Services.Models;
+using Stargate.Services.Models.Dto;
 using Stargate.Services.Repos;
 
 namespace Stargate.Services;
@@ -10,6 +12,8 @@ public interface IDutyService
     public Task<Duty> ChangeTitleAsync(string username, Title newTitle);
     public Task<Duty> SetRetirementAsync(string username, DateTime? retirementDate);
     public Task<Duty> SetPromotionAsync(string username);
+    public Task<DutyDto> ReadAsync(int id);
+    public Task<List<DutyDto>> ListCurrentAsync();
 }
 
 public class DutyService : IDutyService
@@ -22,9 +26,14 @@ public class DutyService : IDutyService
         _context = context;
         _repo = repo;
     }
+
+    /// <summary>
+    /// get a verion of the duty for updating
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     public async Task<Duty> GetCurrentAsync(string username)
     {
-
         var result = await _context.Duties
             .Join(_context.Astronauts, d => d.AstronautId, a => a.Id, (d, a) => new { Duty = d, Astronaut = a })
             .Join(_context.People, da => da.Astronaut.PersonId, p => p.Id, (da, p) => new { DutyAstronaut = da, Person = p })
@@ -33,6 +42,28 @@ public class DutyService : IDutyService
             .FirstOrDefaultAsync();
 
         return result.Duty;
+    }
+
+    /// <summary>
+    /// get a human readable version of the Duty
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<DutyDto> ReadAsync(int id)
+    {
+        var result = await _context.Duties
+       .Join(_context.Astronauts, d => d.AstronautId, a => a.Id, (d, a) => new { Duty = d, Astronaut = a })
+       .Join(_context.People, da => da.Astronaut.PersonId, p => p.Id, (da, p) => new { DutyAstronaut = da, Person = p })
+       .Where(x => x.DutyAstronaut.Duty.Id == id)
+       .Select(x => new { x.DutyAstronaut.Duty, x.DutyAstronaut.Astronaut, x.Person })
+       .FirstOrDefaultAsync();
+
+        var duty = result.Duty;
+        var person = result.Person;
+
+        var endDate = duty.EndDate ??= DateTime.MaxValue.Date;
+
+        return new DutyDto(duty.Id, person.UserName, TextGenHelper.GetFriendlyText(duty.Rank), TextGenHelper.GetFriendlyText(duty.Title), duty.StartDate.Date, endDate);
     }
 
     public async Task<Duty> ChangeTitleAsync(string username, Title newTitle)
@@ -65,8 +96,6 @@ public class DutyService : IDutyService
         }
         return newDuty;
     }
-
-
     public async Task<Duty> SetPromotionAsync(string username)
     {
         Duty newDuty = new();
@@ -99,7 +128,6 @@ public class DutyService : IDutyService
 
         return newDuty;
     }
-
     public async Task<Duty> SetRetirementAsync(string username, DateTime? retirementDate)
     {
         Duty newDuty = new();
@@ -130,5 +158,36 @@ public class DutyService : IDutyService
         }
 
         return newDuty;
+    }
+
+    /// <summary>
+    /// get a readable list of the current duties
+    /// </summary>
+    /// <returns></returns>
+    public async Task<List<DutyDto>> ListCurrentAsync()
+    {
+        List<DutyDto> dutyDtos = new();
+
+        var result = await _context.Duties
+         .Join(_context.Astronauts, d => d.AstronautId, a => a.Id, (d, a) => new { Duty = d, Astronaut = a })
+         .Join(_context.People, da => da.Astronaut.PersonId, p => p.Id, (da, p) => new { DutyAstronaut = da, Person = p })
+         .Where(x => x.DutyAstronaut.Duty.EndDate == null)
+         .Select(x => new { x.DutyAstronaut.Duty, x.DutyAstronaut.Astronaut, x.Person })
+         .ToListAsync();
+
+        foreach (var r in result)
+        {
+            var duty = r.Duty;
+            var person = r.Person;
+
+            var endDate = duty.EndDate ??= DateTime.MaxValue.Date;
+
+            var dto = new DutyDto(duty.Id, person.UserName, TextGenHelper.GetFriendlyText(duty.Rank), TextGenHelper.GetFriendlyText(duty.Title), duty.StartDate.Date, endDate);
+
+
+            dutyDtos.Add(dto);
+        }
+
+        return dutyDtos;
     }
 }

@@ -13,8 +13,5 @@ public class PersonRepo : StargateRepo<Person>
     }
 
     public override async Task<Person> GetAsync(string username, CancellationToken cancellationToken = default)
-    {
-        return await _context.People
-            .Where(p => p.UserName == username).FirstOrDefaultAsync();
-    }
+        => await _context.People.Where(p => p.UserName == username).FirstOrDefaultAsync();
 }

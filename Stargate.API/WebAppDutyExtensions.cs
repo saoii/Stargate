@@ -10,19 +10,19 @@ public static class WebAppDutyExtensions
 {
     public static void MapDutyEndpoints(this WebApplication app)
     {
-        app.MapGet("/duties", async (IRepository<Duty> repo, ILogger<Duty> logger) =>
+        app.MapGet("/duties", async (IDutyService service, ILogger<Duty> logger) =>
         {
-            var allDutys = await repo.AllAsync();
+            var allDutys = await service.ListCurrentAsync();
 
-            logger.LogInformation("Listing all dutys");
+            logger.LogInformation("Listing all duties");
 
             return Results.Ok(allDutys);
 
         }).Produces<Duty[]>(StatusCodes.Status200OK).WithOpenApi().WithName("ListDuty");
 
-        app.MapGet("/duty/{DutyId:int}", async (int DutyId, IRepository<Duty> repo, ILogger<Duty> logger) =>
+        app.MapGet("/duty/{DutyId:int}", async (int DutyId, IDutyService service, ILogger<Duty> logger) =>
         {
-            var Duty = await repo.GetAsync(DutyId);
+            var Duty = await service.ReadAsync(DutyId);
 
             if (Duty == null)
             {
@@ -33,8 +33,7 @@ public static class WebAppDutyExtensions
                 return Results.Problem(message, statusCode: 404);
             }
 
-            logger.LogInformation($"Got current duty for Astronaut: {Duty.AstronautId}");
-
+            logger.LogInformation($"Get current duty for Astronaut: {Duty.Name}");
 
             return Results.Ok(Duty);
         }).ProducesProblem(404).Produces<Duty>(StatusCodes.Status200OK).WithOpenApi().WithName("GetDuty");
@@ -100,7 +99,7 @@ public static class WebAppDutyExtensions
 
             return Results.Created($"/duty/{newDuty.Id}", newDuty);
 
-        }).ProducesValidationProblem().Produces<Duty>(StatusCodes.Status201Created).WithOpenApi().WithName("SetPromotion");
+        }).ProducesValidationProblem().Produces<Duty>(StatusCodes.Status201Created).WithOpenApi().WithName("SetPromotion").WithGroupName("Duty");
 
         app.MapPost("/duty/changetitle/{username}", async (string username, [FromQuery] Title newTitle, IDutyService service, ILogger<Duty> logger) =>
         {
