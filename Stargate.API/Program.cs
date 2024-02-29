@@ -34,7 +34,6 @@ builder.Services.AddProblemDetails();
 builder.Host.UseSerilog();
 builder.Services.AddCors();
 
-
 var app = builder.Build();
 
 app.UseSwagger();
